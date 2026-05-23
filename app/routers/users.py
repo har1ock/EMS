@@ -5,6 +5,7 @@ from app.deps import get_db, get_current_user
 from app.schemas.user import UserCreate, UserOut
 from app.models.user import User
 from app.services import user_service
+from app.deps import get_db, get_current_user, require_admin
 from app.core.security import create_access_token, verify_password
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -41,3 +42,15 @@ def login(
 @router.get("/me", response_model=UserOut)
 def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+
+@router.get("/admin-only-dashboard")
+def get_admin_dashboard(admin_user: User = Depends(require_admin)):
+    """
+    Цей ендпоінт доступний ТІЛЬКИ користувачам з роллю 'admin'.
+    Якщо зайде звичайний юзер — отримає 403 помилку.
+    """
+    return {
+        "message": f"Вітаємо у секретній адмінці, {admin_user.email}!",
+        "secret_data": "Тут якась важлива статистика бекенду, яку юзерам бачити зась."
+    }
