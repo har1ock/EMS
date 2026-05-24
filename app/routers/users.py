@@ -54,3 +54,12 @@ def get_admin_dashboard(admin_user: User = Depends(require_admin)):
         "message": f"Вітаємо у секретній адмінці, {admin_user.email}!",
         "secret_data": "Тут якась важлива статистика бекенду, яку юзерам бачити зась."
     }
+
+@router.patch("/make-me-admin")
+def make_me_admin(
+    current_user: User = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    # Викликаємо сервіс замість прямої зміни в роутері
+    user_service.make_user_admin(db, db_user=current_user)
+    return {"message": "Вітаємо, тепер ви адмін! Перевипустіть токен (зробіть логін знову)."}

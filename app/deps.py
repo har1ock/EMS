@@ -50,7 +50,7 @@ def require_admin(current_user: User = Depends(get_current_user)) -> User:
     Залежність для перевірки, чи має користувач права адміністратора.
     Якщо роль не 'admin' — повертає помилку 403 Forbidden.
     """
-    if current_user.role != "admin": # type: ignore
+    if str(current_user.role) != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="У вас немає прав для виконання цієї дії. Потрібна роль 'admin'.",

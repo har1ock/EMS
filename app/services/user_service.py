@@ -17,3 +17,12 @@ def create_new_user(db: Session, user_data: UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def make_user_admin(db: Session, db_user: User) -> User:
+    """
+    Змінює роль користувача на 'admin' в базі даних.
+    """
+    setattr(db_user, "role", "admin") 
+    db.commit()
+    db.refresh(db_user)
+    return db_user
