@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from app.database import  Base
 
 class User(Base):
@@ -9,3 +10,4 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     role = Column(String, default="user")
     
+    events = relationship("Event", back_populates="owner", cascade="all, delete-orphan")
