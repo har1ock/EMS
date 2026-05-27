@@ -18,3 +18,10 @@ def create_new_event(db: Session, event_data: EventCreate, owner_id: int) -> Eve
     db.commit()
     db.refresh(db_event)
     return db_event
+
+def get_event_by_id(db: Session, event_id: int) -> Event | None:
+    """
+    Шукає подію в базі даних за її ID. 
+    Повертає об'єкт події або None, якщо нічого не знайдено.
+    """
+    return db.query(Event).filter(Event.id == event_id).first()
