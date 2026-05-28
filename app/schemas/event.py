@@ -20,3 +20,11 @@ class EventOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class EventUpdate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    date: datetime
+    location: str
+
+    

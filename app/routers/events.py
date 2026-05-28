@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 
 from app.deps import get_db, get_current_user
-from app.schemas.event import EventCreate, EventOut
+from app.schemas.event import EventCreate, EventOut, EventUpdate
 from app.models.user import User
 from app.services import event_service
 
@@ -43,3 +43,28 @@ def read_event(
         )
     
     return db_event
+
+@router.put("/{id}", response_model=EventOut)
+def update_existing_event(id: int, 
+                          event_data: EventUpdate, 
+                          db: Session = Depends(get_db),
+                          current_user: User = Depends(get_current_user)
+    ):
+    """
+    Редагування події. Доступно тільки власнику цієї події
+    """
+    db_event = event_service.get_event_by_id(db, event_id=id)
+
+    if db_event is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Подію з ID {id} не знайдено."
+        )
+    
+    if db_event.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Ви не є власником цієї події. Редагування заборонено."
+        )
+
+    return event_service.update_event(db, db_event=db_event, update_data=event_data)
