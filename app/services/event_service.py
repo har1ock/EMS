@@ -38,3 +38,10 @@ def update_event(db: Session, db_event: Event, update_data: EventUpdate) -> Even
     db.commit
     db.refresh(db_event)
     return db_event
+
+def delete_event(db: Session, db_event: Event) -> None:
+    """
+    Видаляє подію з бази даних.
+    """
+    db.delete(db_event)
+    db.commit()
