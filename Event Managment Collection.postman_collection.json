@@ -1,0 +1,126 @@
+{
+  "info": {
+    "_postman_id": "7eebebdf-7ded-4c6c-8ef0-7b61838ec74a",
+    "name": "Event Managment Collection",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54715820",
+    "_collection_link": "https://go.postman.co/collection/54715820-7eebebdf-7ded-4c6c-8ef0-7b61838ec74a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"user4@gmail.com\",\r\n  \"password\": \"user\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/users/register",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "users",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Event",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyNEBnbWFpbC5jb20iLCJleHAiOjE3ODExODY0NzN9.ueEF0VLxHt8YTp31Q_r6jXlB4Pk1r4Qu2HI7b9zmN9U",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"title\": \"Грандпрі Монако\",\r\n  \"description\": \"Перегони Формули 1\",\r\n  \"date\": \"2026-06-25T12:00:00\",\r\n  \"location\": \"Монако\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/event/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "event",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login User",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "user4@gmail.com",
+              "type": "text",
+              "uuid": "74174d67-ebcd-4b83-8565-3fbe33f660f7"
+            },
+            {
+              "key": "password",
+              "value": "user",
+              "type": "text",
+              "uuid": "a1ff9a9c-2786-4aa7-be41-dec13c1334ee"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/users/login",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "users",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
