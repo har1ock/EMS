@@ -6,7 +6,7 @@ from app.schemas.event import EventCreate, EventUpdate
 
 def create_new_event(db: Session, event_data: EventCreate, owner_id: int) -> Event:
     """
-    Створити нову подію в базі даних та прив'язує її до користувача 
+    Створює нову подію в базі даних та прив'язує її до користувача 
     """
     db_event = Event(
         title=event_data.title,

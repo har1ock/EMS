@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from fastapi_cache.decorator import cache
 
 from app.deps import get_db, get_current_user, require_admin
 from app.schemas.event import EventCreate, EventOut, EventUpdate
@@ -62,7 +63,7 @@ def update_existing_event(id: int,
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Подію з ID {id} не знайдено."
         )
-    
+    # Перевірка: редагувати запис може тільки той користувач, який його створив
     if db_event.owner_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -79,27 +80,23 @@ def delete_existing_event(
     current_admin: User = Depends(require_admin) # Перевірка: сюди пройде тільки адмін!
 ):
     """
-    Видалення події за її ID. Доступно ТІЛЬКИ користувачам з роллю 'admin'.
+    Видалення події за її ID. Доступно тільки користувачам з роллю 'admin'.
     Повертає статус 204 No Content у разі успіху.
     """
-    # 1. Шукаємо подію в базі
+
     db_event = event_service.get_event_by_id(db, event_id=id)
-    
-    # 2. Якщо її немає — 404 Not Found
+
     if db_event is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Подію з ID {id} не знайдено."
         )
         
-    # 3. Викликаємо сервіс для видалення
     event_service.delete_event(db, db_event=db_event)
-    
-    # Коли ми повертаємо статус 204 (No Content), тіло відповіді має бути порожнім.
-    # FastAPI автоматично це згенерує, тому просто пишемо return
     return None
 
 @router.get("/", response_model=List[EventOut])
+@cache(expire=60) #декоратор
 def read_events(
     skip: int = 0,
     limit: int = 10,

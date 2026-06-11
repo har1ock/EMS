@@ -3,8 +3,9 @@ from datetime import datetime, timezone
 from typing import Optional
 
 
-# Те що надає клієнт 
+
 class EventCreate(BaseModel):
+    """Схема валідації вхідних даних при створенні нової події."""
     title: str
     description: Optional[str] = None
     date: datetime
@@ -13,6 +14,7 @@ class EventCreate(BaseModel):
     @field_validator("date")
     @classmethod
     def check_date_is_future(cls, value: datetime) -> datetime:
+        """Перевірка, дата повинна бути в майбутньому"""
         current_time = datetime.now(timezone.utc)
         if value.tzinfo is None:
             value = value.replace(tzinfo=timezone.utc)
@@ -22,6 +24,7 @@ class EventCreate(BaseModel):
 
 
 class EventUpdate(BaseModel):
+    """Схема валідації даних для часткового або повного оновлення існуючої події."""
     title: Optional[str] = None
     description: Optional[str] = None
     date: Optional[datetime] = None
@@ -39,8 +42,8 @@ class EventUpdate(BaseModel):
         return value
 
 
-# Повертаємо клієнту
 class EventOut(BaseModel):
+    """Схема структури вихідних JSON-даних (відповіді сервера) для об'єкта події."""
     model_config = ConfigDict(from_attributes=True)
     id: int
     title: str

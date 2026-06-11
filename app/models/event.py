@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 class Event(Base):
+    """SQLAlchemy модель, що описує структуру таблиці 'events' у базі даних."""
     __tablename__ = "events"
     
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -15,9 +16,5 @@ class Event(Base):
     description: Mapped[str | None] = mapped_column(nullable=True)
     date: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc), nullable=False)
     location: Mapped[str] = mapped_column(nullable=False)
-
-    # Зовнішній ключ: вказує на id в таблиці "users"
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-
-    # Зв'язок (Relationship): дозволить в коді писати event.owner і отримувати об'єкт юзера
     owner: Mapped["User"] = relationship("User", back_populates="events")

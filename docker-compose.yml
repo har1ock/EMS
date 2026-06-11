@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+
+  # Наш FastAPI додаток
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app.db:/code/app.db # Зберігаємо базу SQLite на хості, щоб дані не зникали при перезапуску
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  # Офіційне NoSQL сховище Redis
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"

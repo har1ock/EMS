@@ -10,11 +10,11 @@ if TYPE_CHECKING:
 
 
 class User(Base):
+    """SQLAlchemy модель, що описує структуру таблиці 'users' у базі даних."""
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     email: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(nullable=False)
     role: Mapped[str] = mapped_column(default="user")
-    
     events: Mapped[list["Event"]] = relationship("Event", back_populates="owner", cascade="all, delete-orphan")

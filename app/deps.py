@@ -13,6 +13,7 @@ from app.services import user_service
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/login")
 
 def get_db() -> Generator[Session, None, None]:
+    """Створює окрему сесію БД для кожного HTTP-запиту та гарантовано закриває її після завершення."""
     db = SessionLocal()
     try:
         yield db
@@ -23,12 +24,14 @@ def get_current_user(
         token: str = Depends(oauth2_scheme),
         db: Session = Depends(get_db)      
 ) -> User:
+    """Витягує JWT-токен із заголовка Authorization, валідує його та повертає поточного користувача."""
     credential_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Не вдалося перевірити облікові дані (токен недійсний або просрочений)",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        # Розшифровуємо токен за допомогою секретного ключа
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         email = payload.get("sub")
 
@@ -38,6 +41,7 @@ def get_current_user(
     except JWTError:
         raise credential_exception
     
+    # Шукаємо користувача в базі. Якщо його видалили, але токен ще діє — доступ буде відхилено
     user = user_service.get_user_by_email(db, email=email)
     if user is None:
         raise credential_exception

@@ -13,14 +13,16 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.post("/register", response_model=UserOut, status_code=201)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
+
     # Викликаємо сервіс для перевірки
     db_user = user_service.get_user_by_email(db, email=user_data.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
+
     # Викликаємо сервіс для створення
     return user_service.create_new_user(db, user_data=user_data)
 
+# Аутентифікація користувача та видача доступу
 @router.post("/login")
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -28,15 +30,15 @@ def login(
 ):
     user = user_service.get_user_by_email(db, email=form_data.username)
 
+    # Верифікація пароля за допомогою інструменту безпеки (хешу Argon2)
     if not user or not verify_password(form_data.password, str(user.password_hash)):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Невірний email або пароль",
             headers={"WWW-Authenticate": "Bearer"},
         )    
-    
+    # Генерація сесійного JWT-токена
     access_token = create_access_token(data={"sub": user.email})
-
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -61,7 +63,7 @@ def get_admin_dashboard(admin_user: User = Depends(require_admin)):
 def promote_user_to_admin(
     user_id: int,
     db: Session = Depends(get_db),
-    current_admin: User = Depends(require_admin) # <--- Тільки адмін може підвищити іншого юзера!
+    current_admin: User = Depends(require_admin)
 ):
     """
     Адмінський ендпоінт для призначення іншого користувача адміністратором.
